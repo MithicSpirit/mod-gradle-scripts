@@ -118,9 +118,10 @@ if (is_bukkit) {
 // Upload
 ext.upload_release_type = getOrDefault('upload_release_type', DEFAULT_RELEASE_TYPE)
 ext.upload_recommended = getOrDefault('upload_recommended', false, it -> it.toBoolean())
+ext.upload_enabled = !(System.env.NO_UPLOAD_MOD == null || System.env.NO_UPLOAD_MOD.isEmpty())
 // CurseForge upload
 ext.enable_curseforge_upload = getOrDefault('enable_curseforge_upload', true, it -> it.toBoolean())
-if (enable_curseforge_upload) {
+if (upload_enabled && enable_curseforge_upload) {
     checkPlugin('com.matthewprenger.cursegradle')
     checkProperty('curseforge_upload_id')
     ext.curseforge_upload_include_prefix = getOrDefault('curseforge_upload_include_prefix', true, it -> it.toBoolean())
@@ -130,13 +131,13 @@ if (enable_curseforge_upload) {
 }
 // CurseForge Bukkit upload
 ext.enable_curseforge_bukkit_upload = getOrDefault('enable_curseforge_bukkit_upload', false, it -> it.toBoolean())
-if (enable_curseforge_bukkit_upload) {
+if (upload_enabled && enable_curseforge_bukkit_upload) {
     checkPlugin('info.u_team.curse_gradle_uploader')
     checkProperty('curseforge_bukkit_upload_id')
     ext.curseforge_bukkit_upload_minecraft_versions = getOrDefault('curseforge_bukkit_upload_minecraft_versions', [], it -> stringToStringList(it))
 }
 // Commons between CurseForge and CurseForge bukkit
-if (enable_curseforge_upload || enable_curseforge_bukkit_upload) {
+if (upload_enabled && (enable_curseforge_upload || enable_curseforge_bukkit_upload)) {
     ext.curseforge_api_key = getOrDefault('curseforge_api_key', System.env.CURSEFORGE_API_KEY ?: '')
     if (curseforge_api_key == null || curseforge_api_key.isEmpty()) {
         project.logger.error('Missing environment variable CURSEFORGE_API_KEY')
@@ -144,7 +145,7 @@ if (enable_curseforge_upload || enable_curseforge_bukkit_upload) {
 }
 // Modrinth upload
 ext.enable_modrinth_upload = getOrDefault('enable_modrinth_upload', true, it -> it.toBoolean())
-if (enable_modrinth_upload) {
+if (upload_enabled && enable_modrinth_upload) {
     checkPlugin('com.modrinth.minotaur')
     checkProperty('modrinth_upload_id')
     ext.modrinth_upload_include_prefix = getOrDefault('modrinth_upload_include_prefix', true, it -> it.toBoolean())
@@ -161,7 +162,7 @@ if (enable_modrinth_upload) {
 }
 // Hangar upload
 ext.enable_hangar_upload = getOrDefault('enable_hangar_upload', false, it -> it.toBoolean())
-if (enable_hangar_upload) {
+if (upload_enabled && enable_hangar_upload) {
     checkPlugin('io.papermc.hangar-publish-plugin')
     checkProperty('hangar_upload_id')
     ext.hangar_upload_minecraft_versions = getOrDefault('hangar_upload_minecraft_versions', [], it -> stringToStringList(it))
@@ -173,7 +174,7 @@ if (enable_hangar_upload) {
 }
 // Mod update
 ext.enable_mod_update = getOrDefault('enable_mod_update', true, it -> it.toBoolean())
-if (enable_mod_update) {
+if (upload_enabled && enable_mod_update) {
     checkPlugin('mod-update')
     ext.mod_update_api_key = getOrDefault('mod_update_api_key', System.env.MOD_UPDATE_API_KEY ?: '')
     if (mod_update_api_key == null || mod_update_api_key.isEmpty()) {
